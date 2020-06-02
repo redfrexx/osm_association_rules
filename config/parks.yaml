@@ -1,0 +1,172 @@
+greenspace_tags:
+- leisure=park
+locations:
+    athens:
+        center:
+        - 23.7279843
+        - 37.9841493
+        country: Greece
+        country_code: GR
+        name: Athens
+        width: 20000
+    berlin:
+        center:
+        - 13.3888599
+        - 52.5170365
+        country: Germany
+        country_code: DE
+        name: Berlin
+        width: 20000
+    daressalam:
+        center:
+        - 39.2803583
+        - -6.8160837
+        country: Tanzania
+        country_code: TZ
+        name: Dar Es Salam
+        width: 20000
+    dresden:
+        center:
+        - 13.7381437
+        - 51.0493286
+        country: Germany
+        country_code: DE
+        name: Dresden
+        width: 20000
+    heidelberg:
+        center:
+        - 8.694724
+        - 49.4093582
+        country: Germany
+        country_code: DE
+        name: Heidelberg
+        width: 20000
+    jerusalem:
+        center:
+        - 35.2250786
+        - 31.778345
+        country: Israel
+        country_code: IL
+        name: Jerusalem
+        width: 20000
+    london:
+        center:
+        - -0.1276474
+        - 51.5073219
+        country: Great Britain
+        country_code: GB
+        name: London
+        width: 20000
+    manchester:
+        center:
+        - -2.2451148
+        - 53.4794892
+        country: Great Britain
+        country_code: GB
+        name: Manchester
+        width: 20000
+    montreal:
+        center:
+        - -73.6103642
+        - 45.4972159
+        country: Canada
+        country_code: CA
+        name: Montreal
+        width: 20000
+    newyork:
+        center:
+        - -74.0060152
+        - 40.7127281
+        country: USA
+        country_code: US
+        name: New York
+        width: 20000
+    osaka:
+        center:
+        - 135.490357
+        - 34.6198813
+        country: Japan
+        country_code: JP
+        name: Osaka
+        width: 20000
+    sanfrancisco:
+        center:
+        - -122.4192363
+        - 37.7792808
+        country: USA
+        country_code: US
+        name: San Francisco
+        width: 20000
+    stockholm:
+        center:
+        - 18.0710935
+        - 59.3251172
+        country: Sweden
+        country_code: SE
+        name: Stockholm
+        width: 20000
+    telaviv:
+        center:
+        - 34.7805274
+        - 32.0804808
+        country: Israel
+        country_code: IL
+        name: Tel Aviv
+        width: 20000
+    test:
+        center:
+        - 13.7381437
+        - 51.0493286
+        country: Germany
+        country_code: DE
+        name: Dresden
+        width: 1000
+    tokyo:
+        center:
+        - 139.7594549
+        - 35.6828387
+        country: Japan
+        country_code: JP
+        name: Tokyo
+        width: 20000
+    vancouver:
+        center:
+        - -123.1139529
+        - 49.2608724
+        country: Canada
+        country_code: CA
+        name: Vancouver
+        width: 20000
+processing:
+    greenspace_content_keys:
+    -   key: amenity
+        type: count
+    -   key: building
+        type: count
+    -   key: fitness_station
+        type: count
+    -   key: shop
+        type: count
+    -   key: highway
+        type: count
+    -   key: leisure
+        type: count
+    -   key: landuse
+        type: count
+    -   key: natural
+        type: count
+    -   key: playground
+        type: count
+    -   key: sport
+        type: count
+    -   key: surface
+        type: count
+    -   key: tourism
+        type: count
+    -   key: water
+        type: count
+    -   key: waterway
+        type: count
+project:
+    data_dir: ./data
+    timeperiod: 2007-11-01,2019-12-10

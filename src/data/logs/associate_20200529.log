@@ -1,0 +1,7 @@
+2020-05-29 09:24:26,419 - osm_association - INFO - Start processing Dresden
+2020-05-29 09:24:26,584 - osm_association - INFO - Step 1: Downloading green space features...
+2020-05-29 09:24:26,584 - osm_association - INFO - Downloading leisure=park
+2020-05-29 09:24:26,584 - osm_association - INFO - Waiting for ohsome response...
+2020-05-29 09:24:27,115 - osm_association - CRITICAL - OhsomeException - Internal Server Error (500): Database doesn't contain the required table(s)/cache(s): global-67100_grid_node, global-67100_grid_way, global-67100_grid_relation.
+URL:https://api.ohsome.org/v0.9/elementsFullHistory/geometry
+Parameters:{'bboxes': '13.592795460769018,50.957803584457494,13.882939970250673,51.14068795008941', 'time': '2007-11-01,2019-12-10', 'keys': 'leisure', 'values': 'park', 'types': 'POLYGON', 'properties': 'tags,metadata'}
