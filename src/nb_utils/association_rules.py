@@ -33,8 +33,8 @@ def calculate_rules(park_features, max_len=2, min_support=0.05):
     # Calculate interest as additional metric
     rules["interest"] = rules["confidence"] - rules["consequent support"]
     # Reformat tags and rule description
-    rules["antecedents"] = rules["antecedents"].map(lambda x: list(x)[0])
-    rules["consequents"] = rules["consequents"].map(lambda x: list(x)[0])
+    rules["antecedents"] = rules["antecedents"].map(lambda x: list(x))
+    rules["consequents"] = rules["consequents"].map(lambda x: list(x))
     if len(rules) > 0:
         rules.loc[:, "rule"] = rules.apply(lambda x: "%s->%s" % (x["antecedents"], x["consequents"]), axis=1)
     return rules
@@ -60,12 +60,12 @@ def generate_association_rules(park_features, max_rule_size, min_support, city_l
         labels[city] = "{} ({})".format(city_labels[city], len(features))
         rules = calculate_rules(features, max_len=max_rule_size, min_support=min_support)
         # Filter out rules without meaningful consequents
-        interesting_rules = rules.loc[(rules["consequents"] != "none")]
+        interesting_rules = rules[rules["consequents"].map(lambda x: "none" not in x)]
         if len(interesting_rules) == 0:
             interesting_rules = pd.DataFrame(columns=list(rules.columns) + ["city"])
             interesting_rules = interesting_rules.append({"city": city}, ignore_index=True)
         else:
-            interesting_rules.loc[:,"city"] = city
+            interesting_rules.loc[:, "city"] = city
         all_rules.append(interesting_rules)
     return pd.concat(all_rules), labels
 
