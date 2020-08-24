@@ -61,6 +61,8 @@ def generate_association_rules(park_features, max_rule_size, min_support, city_l
         rules = calculate_rules(features, max_len=max_rule_size, min_support=min_support)
         # Filter out rules without meaningful consequents
         interesting_rules = rules[rules["consequents"].map(lambda x: "none" not in x)]
+        interesting_rules = interesting_rules[interesting_rules["antecedents"].map(lambda x: "none" not in x)]
+
         if len(interesting_rules) == 0:
             interesting_rules = pd.DataFrame(columns=list(rules.columns) + ["city"])
             interesting_rules = interesting_rules.append({"city": city}, ignore_index=True)
@@ -80,7 +82,7 @@ def select_interesting_rules(all_rules, min_confidence, min_lift):
     :return: DataFrames containing interesting rrules in heatmap format and original format
     """
     # Reformat rules as strings
-    all_rules["rule"] = all_rules.apply(lambda x: "%s → %s" % (x["antecedents"], x["consequents"]), axis=1)
+    all_rules["rule"] = all_rules.apply(lambda x: "%s → %s" % (", ".join(x["antecedents"]), ", ".join(x["consequents"])), axis=1)
 
     # Create list of cities
     unique_cities = all_rules["city"].unique()
@@ -219,7 +221,7 @@ def plot_graph(all_feat, current_rules, col, bins=50, ax=None, metric="confidenc
     plt.gcf().tight_layout(pad=1.0)
 
 
-def calculate_context_dependent_rules(all_features, city, col, perc=False, min_nfeatures=100, min_support=0.05):
+def calculate_context_dependent_rules(all_features, city, col, perc=False, min_nfeatures=100, min_support=0.05, max_len=2):
     """
     Derive association rules for subsets of features
 
@@ -255,7 +257,7 @@ def calculate_context_dependent_rules(all_features, city, col, perc=False, min_n
         # For each subset, calculate association rules.
         for chunk in chunks:
 
-            rules_sub = calculate_rules(chunk, max_len=2, min_support=min_support)
+            rules_sub = calculate_rules(chunk, max_len=max_len, min_support=min_support)
             selected_rules_sub = rules_sub.loc[
                 (rules_sub["support"] > min_support) & (rules_sub["consequents"] != "none")]
 
@@ -287,7 +289,7 @@ def calculate_context_dependent_rules(all_features, city, col, perc=False, min_n
     return valid_rules, selected_features
 
 
-def context_association_rules_all_cities(all_features, min_nfeatures, min_support, city_labels):
+def context_association_rules_all_cities(all_features, min_nfeatures, min_support, city_labels, max_len=2):
     """
     Performs a context-based association rule analysis for all cities.
     :param all_features: GeoDataFrame containing parks of all cities
@@ -307,7 +309,7 @@ def context_association_rules_all_cities(all_features, min_nfeatures, min_suppor
         all_sel_features = []
         for con in context_names:
 
-            valid_rules, sel_features = calculate_context_dependent_rules(all_features, city, col=con, min_nfeatures=min_nfeatures, min_support=min_support)
+            valid_rules, sel_features = calculate_context_dependent_rules(all_features, city, col=con, min_nfeatures=min_nfeatures, min_support=min_support, max_len=max_len)
             if len(valid_rules) == 0:
                 continue
             #valid_rules = valid_rules[valid_rules["antecedent support"] < valid_rules["consequent support"]]
@@ -380,3 +382,49 @@ def split_df(dfs, context_var):
         threshold = df[context_var].median()
         chunks.extend([df.loc[df[context_var] <= threshold], df.loc[df[context_var] > threshold]])
     return chunks
+
+
+def filter_rules(rules_all, cities):
+    """
+    Filter association rules by comparing rules of size 3 and higher to rules of 2. If the confidence value of the rule
+    of size 2 is only 10 percent lower, the large rule is dismissed.
+    :param rules_all:
+    :param cities:
+    :return:
+    """
+    rules_big = rules_all[rules_all.apply(lambda x: (len(x["consequents"]) > 1) | (len(x["antecedents"]) > 1), axis=1)]
+    rules_two = rules_all[
+        rules_all.apply(lambda x: (len(x["consequents"]) == 1) & (len(x["antecedents"]) == 1), axis=1)]
+    rules_three = rules_all[
+        rules_all.apply(lambda x: (len(x["consequents"]) == 1) & (len(x["antecedents"]) == 2), axis=1)]
+
+    filtered_rules = []
+
+    for c in cities:
+        print(c)
+        rules_two_city = rules_two[rules_two["city"] == c]
+        rules_big_city = rules_big[rules_big["city"] == c]
+        rules_three_city = rules_three[rules_three["city"] == c]
+
+        for i, ex in rules_big_city.iterrows():
+            ant = ex["antecedents"]
+            con = ex["consequents"]
+            if len(con) == 1:
+                res = rules_two_city[rules_two_city.apply(lambda x: any([a in x["antecedents"] for a in ant])
+                                                                    & (x["consequents"] == con), axis=1)]
+            elif len(con) == 2:
+                res = rules_three_city[rules_three_city.apply(lambda x: any([a in x["antecedents"] for a in ant])
+                                                                        & (x["consequents"] == con),
+                                                              axis=1)]  # Case 1: Found a comparable rule of size 2
+            else:
+                # print("rules with three consequents are excluded.")
+                continue
+            if (len(res) > 0) and ((ex["confidence"] - res["confidence"].max()) > 0.10):
+                filtered_rules.append(ex)
+            elif len(res) == 0:
+                filtered_rules.append(ex)
+
+    filtered_rules_df = pd.DataFrame(filtered_rules)
+    filtered_rules_df = pd.concat([filtered_rules_df, rules_two])
+
+    return filtered_rules_df

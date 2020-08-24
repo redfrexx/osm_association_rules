@@ -117,3 +117,25 @@ def fig_users_tokyo(parks_tokyo, users_tokyo, figures_dir=None):
     if figures_dir is not None and os.path.exists(figures_dir):
         plt.savefig(os.path.join(figures_dir, "figure_supplement_1.pdf"), dpi=600, bottom=0.4)
 
+
+def rule_size_chart(rules_all):
+    """
+    Creates a bar plot showing the number of rules by size for each city
+    :param rules_all:
+    :return:
+    """
+    rules_all["size"] = rules_all.apply(lambda x: len(set(x["consequents"] + x["antecedents"])), axis=1)
+    rules_all.loc[rules_all["city"] == "dresden", "size"].value_counts()
+    # rule_size_by_city = rules_all.groupby("city").apply(lambda x: x["size"].value_counts() / len(x["size"]))
+    rule_size_by_city = rules_all.groupby("city").apply(lambda x: x["size"].value_counts())
+
+    rule_size_by_city = rule_size_by_city.reset_index().pivot(index="level_1", columns="city")
+    rule_size_by_city.index.name = "Rule size"
+    rule_size_by_city.columns = rule_size_by_city.columns.droplevel(0)
+
+    rule_size_by_city_perc = rule_size_by_city / rule_size_by_city.sum(axis=0)
+    rule_size_by_city = rule_size_by_city.fillna(0)
+
+    plot1 = rule_size_by_city_perc.T.plot(kind='barh', stacked=True)
+    plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.8), title="Rule size")
+    return rule_size_by_city, rule_size_by_city_perc
