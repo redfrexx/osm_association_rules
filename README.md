@@ -17,7 +17,7 @@ conda install --file requirements.txt
 
 ## Content
 
-The results of the analysis may be reproduced using the two jupyter notebooks and the extracted data provided in ```./data```. 
+The results of the analysis can be reproduced using the two Jupyter notebooks and the extracted data provided in ```./data```. 
 
 #### 1. Exploratory Data Analysis
 
@@ -27,7 +27,6 @@ The notebook  ```./src/01-Exploratory_Data_Analysis.ipynb``` contains the explor
 
 The notebook ```./src/02-Association_Rule_Mining.ipynb``` contains the association rule analysis. 
 
-
 #### 3. Data Extraction 
 
-If you would like to perform this analysis for another city, you may use the Python script `./src/00-Data_Extraction.py` to extract the data using the [ohsome API](https://api.ohsome.org/v0.9/swagger-ui.html). For this to run add the city to the configuration file ```./config/parks.yaml``` and adapt the change the city name in the Python file. To run the data extraction for multiple cities, run ```./src/00-Data_Extraction_Batch.sh```.
+If you would like to perform this analysis for another city, you may use the Python script `./src/00-Data_Extraction.py` to extract the data using the [ohsome API](https://api.ohsome.org/v0.9/swagger-ui.html). For this to run add the city to the configuration file ```./config/parks.yaml``` and adapt the city name in the Python file. To run the data extraction for multiple cities, you may use ```./src/00-Data_Extraction_Batch.sh```.
