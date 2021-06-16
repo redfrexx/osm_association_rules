@@ -11,7 +11,8 @@ from ohsome import OhsomeClient, OhsomeException
 import os
 import pandas as pd
 import logging
-import utils
+import nb_utils.utils as utils
+
 
 def age_version_changes(dataframe, now):
     """

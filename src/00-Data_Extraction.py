@@ -14,13 +14,13 @@ import geopy
 from data_extraction.download import download_greenspace_features
 from data_extraction.context import context_variables
 from data_extraction.tags import tags_inside_greenspaces
-from utils import create_bbox, center_from_name, load_config_yaml, init_logger, update_config_yaml
+from nb_utils.utils import create_bbox, center_from_name, load_config_yaml, init_logger, update_config_yaml
 from geopy.exc import GeocoderTimedOut
 
 
 def main():
 
-    DEBUG = True
+    DEBUG = False
 
     if not DEBUG:
         # Parse command line arguments
@@ -32,7 +32,7 @@ def main():
         config_file = args.config
     else:
         # For testing: Command line parameters
-        region_name = "dresden"
+        region_name = "dresden_test"
         config_file = "../config/parks.yaml"
 
     # Load config parameters

@@ -98,9 +98,10 @@ def tags_inside_greenspaces(outdir, region_name, timestamp, context_keys):
     all_feature_content = all_feature_content.drop(["geometry"], axis=1)
     all_feature_content_bin = all_feature_content > 0
     all_feature_content_bin.reset_index(inplace=True)
-    pd.DataFrame(all_feature_content_bin).to_json(os.path.join(outdir, os.path.splitext(os.path.basename(f))[0] + "_tags.json"), orient="records")
+    pd.DataFrame(all_feature_content_bin).to_json(os.path.join(outdir, region_name, os.path.splitext(os.path.basename(f))[0] + "_tags.json"), orient="records")
 
     return 0
+
 
 if __name__ == "__main__":
     pass

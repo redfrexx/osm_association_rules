@@ -13,7 +13,11 @@ import math
 import pyproj
 from shapely.ops import transform
 from shapely.geometry import box, Point
-
+import yaml
+import logging
+import geopy
+import os
+import datetime
 from functools import partial
 
 
@@ -92,3 +96,63 @@ def create_bbox(center, width):
 
     return bbox.bounds
 
+
+def load_config_yaml(config_file):
+    """
+    Load parameters from config file
+    :param config_file: path to config file
+    :return:
+    """
+    with open(config_file, 'r') as src:
+        config = yaml.load(src, Loader=yaml.FullLoader)
+    return config
+
+
+def update_config_yaml(config, config_file):
+    """
+    Load parameters from config file
+    :param config_file: path to config file
+    :return:
+    """
+    with open(config_file, 'w') as dst:
+        config = yaml.dump(config, dst, default_flow_style=False, indent=4)
+    return config
+
+
+def init_logger(name, log_dir):
+    """
+    Set up logger
+    :return:
+    """
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # Add handlers
+    streamhandler = logging.StreamHandler()
+    streamhandler.setLevel(logging.INFO)
+    streamhandler.setFormatter(formatter)
+    logger.addHandler(streamhandler)
+    filehandler = logging.FileHandler(filename=os.path.join(log_dir, "associate_%s.log" % (datetime.datetime.now().strftime("%Y%m%d"))))
+    filehandler.setLevel(logging.INFO)
+    filehandler.setFormatter(formatter)
+    logger.addHandler(filehandler)
+    return logger
+
+
+def center_from_name(region_name, country_code=None):
+    """
+    Get the bounding box of a region using Nominatim
+    :param region_name:
+    :param country_code:
+    :return:
+    """
+
+    geocoder = geopy.Nominatim(user_agent="chl2", scheme="http")
+
+    res = geocoder.geocode(region_name, geometry="geojson", country_codes=country_code)
+    if isinstance(res, geopy.location.Location):
+        raw_lat = res.latitude
+        raw_lon = res.longitude
+        return (raw_lon, raw_lat)
+    else:
+        raise ValueError("Location not found.")

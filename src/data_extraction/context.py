@@ -12,8 +12,7 @@ import os
 import glob
 import geopandas as gpd
 import logging
-from utils import buffer_in_meters, reproject_to_utm, convert_meter_to_degree_longitude
-from shapely.geometry import box
+from nb_utils.utils import buffer_in_meters, reproject_to_utm, convert_meter_to_degree_longitude
 import datetime
 
 import warnings
@@ -142,7 +141,7 @@ def context_variables(outdir, region, config):
             logger.critical("{}\nURL:{}\nParameters:{}".format(e, e.url, e.params))
 
         # Write to file
-        outfile = os.path.join(outdir, os.path.basename(f).split(".")[0] + "_context.geojson")
+        outfile = os.path.join(feature_dir, os.path.basename(f).split(".")[0] + "_context.geojson")
         features_notags_df.reset_index().to_file(outfile, driver="GeoJSON", na="drop")
 
     del client
